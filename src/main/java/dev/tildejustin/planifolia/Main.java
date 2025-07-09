@@ -22,8 +22,8 @@ public class Main implements PreLaunchEntrypoint {
                             Mixins.addConfiguration("planifolia.mixins.json");
                             return;
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        System.out.println("Got error with '" + file.getName() + "'. skipping this.");
                     }
                 }
             }
