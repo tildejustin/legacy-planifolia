@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.*;
 
-@Debug(export = true)
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
     @Shadow
