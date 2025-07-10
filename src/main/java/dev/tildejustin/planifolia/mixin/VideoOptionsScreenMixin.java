@@ -10,7 +10,8 @@ import java.util.List;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class VideoOptionsScreenMixin extends Screen {
-    private static GameOption[] field_1298 = new GameOption[]{
+    @SuppressWarnings({"MissingUnique", "unused"})
+    private static final GameOption[] field_1298 = new GameOption[]{
             GameOption.GRAPHICS,
             GameOption.RENDER_DISTANCE,
             GameOption.AMBIENT_OCCLUSION,
@@ -45,12 +46,12 @@ public abstract class VideoOptionsScreenMixin extends Screen {
 
     @Dynamic
     @ModifyConstant(method = "init", constant = @Constant(stringValue = "of.options.shaders"))
-    private String changeId(String original) {
+    private String changeName(String original) {
         return "of.options.performance";
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/VideoOptionsScreen;renderBackground()V"))
-    public void redirectRenderBackground(VideoOptionsScreen instance) {
+    public void renderDirtBackground(VideoOptionsScreen instance) {
         this.renderDirtBackground(0);
     }
 }

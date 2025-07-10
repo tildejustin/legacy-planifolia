@@ -17,6 +17,9 @@
       "dev.tildejustin.planifolia.Main"
     ]
   },
+  "mixins": [
+    "planifolia.mixins.json"
+  ],
   "license": "MPL-2.0",
   "environment": "*",
   "depends": {

@@ -4,10 +4,12 @@ yarn_build = "571"
 fabric_loader = "0.16.14"
 loom = "1.11-SNAPSHOT"
 legacy-looming = "1.10-SNAPSHOT"
+optifabric = "1f9d85ee7c"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+optifabric = { module = "dev.tildejustin.optifabric:build", version.ref = "optifabric" }
 
 [plugins]
 fabric_loom = { id = "fabric-loom", version.ref = "loom" }

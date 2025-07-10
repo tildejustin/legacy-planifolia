@@ -12,8 +12,7 @@ base {
 }
 
 repositories {
-    // maven { url "https://jitpack.io" }
-    flatDir { dirs "libs" }
+    maven { url "https://jitpack.io" }
 }
 
 loom {
@@ -25,16 +24,14 @@ loom {
     mixin {
         useLegacyMixinAp = false
     }
-    // legacyLooming {
-    //     intermediaryVersion = 1
-    // }
-    // runs.client.programArgs "--userProperties", "{}"
+    runs.client.programArgs "--userProperties", "{}"
 }
 
 dependencies {
     minecraft libs.minecraft
     mappings legacy.yarn(libs.versions.minecraft.get(), libs.versions.yarn.build.get())
     modImplementation libs.fabric.loader
+    modImplementation libs.optifabric
 }
 
 processResources {

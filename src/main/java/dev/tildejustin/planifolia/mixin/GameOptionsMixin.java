@@ -14,9 +14,6 @@ public abstract class GameOptionsMixin {
     @Shadow
     public int viewDistance;
 
-    @Shadow
-    public float gamma;
-
     @ModifyArg(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOption;method_6658(F)V"))
     private float decreaseMaxRd(float f) {
         return 16;
@@ -24,11 +21,12 @@ public abstract class GameOptionsMixin {
 
     @Dynamic
     @Redirect(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lorg/apache/commons/lang3/ArrayUtils;add([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;"))
-    private Object[] removeZoom(Object[] original, Object zoomKey) {
+    private Object[] removeZoomHotkey(Object[] original, Object zoomKey) {
         return original;
     }
 
     @Inject(method = "getStringOption", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/language/I18n;translate(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;", ordinal = 1), cancellable = true)
+    @SuppressWarnings({"UnresolvedLocalCapture"})
     private void fixChunkText(GameOption option, CallbackInfoReturnable<String> cir, @Local(ordinal = 0) String name, @Local int chunks) {
         cir.setReturnValue(name + chunks + " chunks");
     }
@@ -46,11 +44,10 @@ public abstract class GameOptionsMixin {
 
     @Dynamic
     @Shadow(remap = false)
-    private boolean ofLoadFar, ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame,
-            ofAnimatedSmoke, ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain,
-            ofAnimatedTextures, ofAnimatedItems, ofRainSplash, ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater,
-            ofDepthFog, ofProfiler, ofBetterSnow, ofSwampColors, ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes,
-            ofLazyChunkLoading, ofDynamicFov, ofFastMath, ofRandomMobs, ofNaturalTextures;
+    private boolean ofLoadFar, ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame, ofAnimatedSmoke,
+            ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofAnimatedItems,
+            ofRainSplash, ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater, ofDepthFog, ofProfiler, ofBetterSnow, ofSwampColors,
+            ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes, ofLazyChunkLoading, ofDynamicFov, ofFastMath, ofRandomMobs, ofNaturalTextures;
 
     @Dynamic
     @Shadow(remap = false)
@@ -64,7 +61,6 @@ public abstract class GameOptionsMixin {
     @Inject(method = "loadOfOptions", at = @At("RETURN"))
     private void fixIllegalOptions(CallbackInfo ci) {
         this.viewDistance = MathHelper.clamp(this.viewDistance, 2, 16);
-        this.gamma = MathHelper.clamp(this.gamma, 0, 5);
         this.ofFogType = MathHelper.clamp(this.ofFogType, 1, 2);
         this.ofFogStart = 0.75f;
         this.ofMipmapType = 0;

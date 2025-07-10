@@ -2,8 +2,16 @@
   "required": true,
   "package": "dev.tildejustin.planifolia.mixin",
   "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "PlayerWorldManagerMixin"
+  ],
   "client": [
-    "GameOptionsUniversalMixin"
+    "GameOptionAccessor",
+    "GameOptionMixin",
+    "GameOptionsMixin",
+    "GameRendererMixin",
+    "GuiPerformanceSettingsOFMixin",
+    "VideoOptionsScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
