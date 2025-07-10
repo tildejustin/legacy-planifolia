@@ -14,7 +14,7 @@
   },
   "entrypoints": {
     "preLaunch": [
-      "dev.tildejustin.planifolia.Main"
+      "dev.tildejustin.planifolia.Planifolia"
     ]
   },
   "mixins": [

@@ -5,7 +5,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import org.spongepowered.asm.mixin.Mixins;
 
-public class Main implements PreLaunchEntrypoint {
+public class Planifolia implements PreLaunchEntrypoint {
     @Override
     public void onPreLaunch() {
         if (!FabricLoader.getInstance().isModLoaded("optifabric")) {
