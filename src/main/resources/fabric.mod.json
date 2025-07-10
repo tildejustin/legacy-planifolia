@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "planifolia",
+  "id": "legacy-planifolia",
   "version": "${version}",
-  "name": "Planifolia",
-  "description": "",
+  "name": "Legacy Planifolia",
+  "description": "Remove non-vanilla nonsense from OptiFine",
   "authors": [
     "tildejustin"
   ],
   "contact": {
-    "homepage": "https://modrinth.com/mod/planifolia",
-    "sources": "https://github.com/tildejustin/planifolia",
-    "issues": "https://github.com/tildejustin/planifolia/issues"
+    "homepage": "https://github.com/tildejustin/legacy-planifolia",
+    "sources": "https://github.com/tildejustin/legacy-planifolia",
+    "issues": "https://github.com/tildejustin/legacy-planifolia/issues"
   },
   "entrypoints": {
     "preLaunch": [
