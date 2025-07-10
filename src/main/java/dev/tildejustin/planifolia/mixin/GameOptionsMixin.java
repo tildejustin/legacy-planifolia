@@ -2,6 +2,7 @@ package dev.tildejustin.planifolia.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
@@ -14,12 +15,17 @@ public abstract class GameOptionsMixin {
     @Shadow
     public int viewDistance;
 
-    @Unique
-    private final Integer maxRd = 16;
+    @Shadow
+    protected MinecraftClient client;
 
+    @Unique
+    private Integer maxRd = null;
 
     @ModifyArg(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOption;method_6658(F)V"))
     private float decreaseMaxRd(float f) {
+        if (maxRd == null) {
+            maxRd = client.is64Bit() && Runtime.getRuntime().maxMemory() >= 1000000000L ? 32 : 16;
+        }
         return maxRd;
     }
 
@@ -29,27 +35,39 @@ public abstract class GameOptionsMixin {
         return original;
     }
 
-    @ModifyReturnValue(method = "getStringOption", at = @At(value = "RETURN", ordinal = 0), remap = false)
+    // using locals when injecting into this method breaks mixin for some unholy reason
+    @Dynamic
+    @ModifyReturnValue(method = "getKeyBindingOF", at = @At(value = "RETURN", ordinal = 0), remap = false)
     private String fixChunkText(String original) {
         return original.substring(0, original.lastIndexOf(" ")) + " chunks";
     }
 
     @Dynamic
-    @WrapOperation(method = "setOption(Lnet/minecraft/client/option/GameOption;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
+    @WrapOperation(method = "setOptionValueOF(Lnet/minecraft/class_350;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
     private void neverFogOff(GameOptions instance, int value, Operation<Void> operation) {
         operation.call(instance, value == 3 ? 1 : value);
     }
 
+
+    /**
+     * @author tildejustin
+     * @reason I mean everything bad thing I have ever said about OptiFine, actually WTF is this
+     */
     @Dynamic
-    @Shadow(remap = false)
-    private int ofFogType, ofPreloadedChunks, ofClouds, ofTrees, ofGrass, ofDroppedItems, ofRain, ofWater, ofAnimatedWater, ofAnimatedLava, ofMipmapType,
-            ofAutoSaveTicks, ofBetterGrass, ofConnectedTextures, ofVignette, ofChunkLoading, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks;
+    @Overwrite(remap = false)
+    private void updateRenderClouds() {
+    }
 
     @Dynamic
     @Shadow(remap = false)
-    private boolean ofLoadFar, ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame, ofAnimatedSmoke,
-            ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofAnimatedItems,
-            ofRainSplash, ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater, ofDepthFog, ofProfiler, ofBetterSnow, ofSwampColors,
+    private int ofFogType, ofClouds, ofTrees, ofDroppedItems, ofRain, ofAnimatedWater, ofAnimatedLava, ofMipmapType, ofAutoSaveTicks, ofBetterGrass,
+            ofConnectedTextures, ofVignette, ofAfLevel, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks;
+
+    @Dynamic
+    @Shadow(remap = false)
+    private boolean ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame, ofAnimatedSmoke, ofCustomGuis,
+            ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofRainSplash,
+            ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater, ofFireworkParticles, ofProfiler, ofBetterSnow, ofSwampColors,
             ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes, ofLazyChunkLoading, ofDynamicFov, ofFastMath, ofRandomMobs, ofNaturalTextures;
 
     @Dynamic
@@ -67,17 +85,13 @@ public abstract class GameOptionsMixin {
         this.ofFogType = MathHelper.clamp(this.ofFogType, 1, 2);
         this.ofFogStart = 0.75f;
         this.ofMipmapType = 0;
-        this.ofLoadFar = false;
-        this.ofPreloadedChunks = 0;
         this.ofSmoothWorld = false;
         this.ofAoLevel = 1;
         this.ofClouds = 0;
         this.ofCloudsHeight = 0;
         this.ofTrees = 0;
-        this.ofGrass = 0;
         this.ofDroppedItems = 0;
         this.ofRain = 0;
-        this.ofWater = 0;
         this.ofAnimatedWater = 0;
         this.ofAnimatedLava = 0;
         this.ofAnimatedFire = true;
@@ -90,10 +104,10 @@ public abstract class GameOptionsMixin {
         this.ofWaterParticles = true;
         this.ofPortalParticles = true;
         this.ofPotionParticles = true;
+        this.ofFireworkParticles = true;
         this.ofDrippingWaterLava = true;
         this.ofAnimatedTerrain = true;
         this.ofAnimatedTextures = true;
-        this.ofAnimatedItems = true;
         this.ofRainSplash = true;
         this.ofLagometer = false;
         this.ofShowFps = false;
@@ -105,11 +119,12 @@ public abstract class GameOptionsMixin {
         this.ofStars = true;
         this.ofSunMoon = true;
         this.ofVignette = 0;
-        this.ofChunkLoading = 0;
+        // this.ofChunkLoading = 0;
         this.ofTime = 0;
         this.ofClearWater = false;
-        this.ofDepthFog = true;
+        // this.ofDepthFog = true;
         this.ofAaLevel = 0;
+        this.ofAfLevel = 1;
         this.ofProfiler = false;
         this.ofBetterSnow = false;
         this.ofSwampColors = true;
@@ -123,8 +138,9 @@ public abstract class GameOptionsMixin {
         this.ofLazyChunkLoading = false;
         this.ofDynamicFov = false;
         this.ofDynamicLights = 3;
+        this.ofCustomGuis = false;
         this.ofFullscreenMode = "Default";
         this.ofFastMath = false;
-        this.ofTranslucentBlocks = 2;
+        this.ofTranslucentBlocks = 0; // different from 1.7.10
     }
 }

@@ -18,7 +18,7 @@ public class Planifolia implements PreLaunchEntrypoint {
             return;
         }
 
-        if (!"OptiFine_1.7.10_HD_U_E7".equals(OptifineVersion.version)) {
+        if (!"OptiFine_1.8_HD_U_I7".equals(OptifineVersion.version)) {
             System.err.println("wrong OptiFine version");
             return;
         }

@@ -19,14 +19,14 @@ public abstract class VideoOptionsScreenMixin extends Screen {
             GameOption.ANAGLYPH,
             GameOption.VIEW_BOBBING,
             GameOption.GUI_SCALE,
-            GameOption.ADVANCED_OPENGL,
             GameOption.GAMMA,
             GameOption.RENDER_CLOUDS,
             GameOption.PARTICLES,
             GameOption.USE_FULLSCREEN,
             GameOption.ENABLE_VSYNC,
             GameOption.MIPMAP_LEVELS,
-            GameOption.ANISOTROPIC_FILTERING
+            GameOption.BLOCK_ALTERNATIVES,
+            GameOption.USE_VBO
     };
 
     @Dynamic

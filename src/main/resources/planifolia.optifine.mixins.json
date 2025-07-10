@@ -2,10 +2,8 @@
   "required": true,
   "package": "dev.tildejustin.planifolia.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "PlayerWorldManagerMixin"
-  ],
   "client": [
+    "ConfigMixin",
     "GameOptionAccessor",
     "GameOptionMixin",
     "GameOptionsMixin",
