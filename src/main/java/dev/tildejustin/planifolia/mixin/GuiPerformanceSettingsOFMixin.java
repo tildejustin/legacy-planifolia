@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.injection.*;
 @Pseudo
 @Mixin(targets = "GuiPerformanceSettingsOF", remap = false)
 public class GuiPerformanceSettingsOFMixin extends Screen {
-    @SuppressWarnings({"MissingUnique", "unused"})
+    @Shadow
+    @SuppressWarnings("unused")
     private static final GameOption[] enumOptions = new GameOption[]{
             GameOptionAccessor.getSmoothFPS(),
             GameOptionAccessor.getFastRender(),

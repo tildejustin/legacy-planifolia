@@ -11,8 +11,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
+    @Dynamic
+    @Shadow(remap = false)
+    // breaks if abstract
+    private void updateWaterOpacity() {
+    }
+
     @Shadow
     public int viewDistance;
+
+    @Shadow
+    public int maxFramerate;
+
+    @Shadow
+    public boolean vsync;
 
     @Unique
     private final Integer maxRd = 16;
@@ -63,6 +75,10 @@ public abstract class GameOptionsMixin {
     @Dynamic
     @Inject(method = "loadOfOptions", at = @At("RETURN"), remap = false)
     private void fixIllegalOptions(CallbackInfo ci) {
+        if (maxFramerate == 0) {
+            this.vsync = true;
+            this.maxFramerate = 120;
+        }
         this.viewDistance = MathHelper.clamp(this.viewDistance, 2, maxRd);
         this.ofFogType = MathHelper.clamp(this.ofFogType, 1, 2);
         this.ofFogStart = 0.75f;
@@ -121,10 +137,11 @@ public abstract class GameOptionsMixin {
         this.ofShowCapes = true;
         this.ofNaturalTextures = false;
         this.ofLazyChunkLoading = false;
-        this.ofDynamicFov = false;
+        this.ofDynamicFov = true;
         this.ofDynamicLights = 3;
         this.ofFullscreenMode = "Default";
         this.ofFastMath = false;
         this.ofTranslucentBlocks = 2;
+        this.updateWaterOpacity();
     }
 }
