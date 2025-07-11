@@ -1,6 +1,6 @@
 package dev.tildejustin.planifolia.mixin;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.*;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GameOptions;
@@ -58,6 +58,17 @@ public abstract class GameOptionsMixin {
     @WrapOperation(method = "setOptionValueOF(Lnet/minecraft/class_347$class_350;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
     private void neverFogOff(GameOptions instance, int value, Operation<Void> operation) {
         operation.call(instance, value == 3 ? 1 : value);
+    }
+
+    @Dynamic
+    @ModifyExpressionValue(method = "getOptionFloatValueOF", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/GameOptions;vsync:Z"))
+    private boolean removeAdditionalFPSSliderLogic(boolean original) {
+        return false;
+    }
+
+    @Dynamic
+    @Redirect(method = "setValue", at = @At(value = "FIELD", target = "Lnet/minecraft/client/option/GameOptions;vsync:Z"))
+    private void removeMoreFPSSliderLogic(GameOptions options, boolean original) {
     }
 
     /**
