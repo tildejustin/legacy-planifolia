@@ -5,10 +5,11 @@
   "client": [
     "ConfigMixin",
     "GameOptionAccessor",
-    "GameOptionMixin",
+    "GameOptions$OptionMixin",
     "GameOptionsMixin",
     "GameRendererMixin",
     "GuiPerformanceSettingsOFMixin",
+    "IntegratedServerMixin",
     "VideoOptionsScreenMixin"
   ],
   "injectors": {

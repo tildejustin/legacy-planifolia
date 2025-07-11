@@ -2,7 +2,6 @@ package dev.tildejustin.planifolia.mixin;
 
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.Window;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 
@@ -14,12 +13,7 @@ public abstract class GameRendererMixin {
     }
 
     @Dynamic
-    @Redirect(method = "getFov", at = @At(value = "FIELD", target = "LConfig;zoomMode:Z", opcode = Opcodes.PUTSTATIC, remap = false))
-    private void keepZoomOff(boolean original) {
-    }
-
-    @Dynamic
-    @Redirect(method = "method_9775", at = @At(value = "INVOKE", target = "LLagometer;showLagometer(Lnet/minecraft/class_389;)V", remap = false))
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/optifine/Lagometer;showLagometer(Lnet/minecraft/class_389;)V", remap = false))
     private void disableLagMeter(Window window) {
     }
 }

@@ -2,7 +2,7 @@ package dev.tildejustin.planifolia.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.client.gui.screen.*;
-import net.minecraft.client.option.GameOption;
+import net.minecraft.client.option.GameOptions;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
 
@@ -10,23 +10,25 @@ import java.util.List;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class VideoOptionsScreenMixin extends Screen {
-    @SuppressWarnings({"MissingUnique", "unused"})
-    private static final GameOption[] field_1298 = new GameOption[]{
-            GameOption.GRAPHICS,
-            GameOption.RENDER_DISTANCE,
-            GameOption.AMBIENT_OCCLUSION,
-            GameOption.FRAMERATE_LIMIT,
-            GameOption.ANAGLYPH,
-            GameOption.VIEW_BOBBING,
-            GameOption.GUI_SCALE,
-            GameOption.GAMMA,
-            GameOption.RENDER_CLOUDS,
-            GameOption.PARTICLES,
-            GameOption.USE_FULLSCREEN,
-            GameOption.ENABLE_VSYNC,
-            GameOption.MIPMAP_LEVELS,
-            GameOption.BLOCK_ALTERNATIVES,
-            GameOption.USE_VBO
+    @Shadow
+    @SuppressWarnings("unused")
+    private static final GameOptions.Option[] OPTIONS = new GameOptions.Option[]{
+            GameOptions.Option.GRAPHICS,
+            GameOptions.Option.RENDER_DISTANCE,
+            GameOptions.Option.AMBIENT_OCCLUSION,
+            GameOptions.Option.MAX_FPS,
+            GameOptions.Option.ANAGLYPH,
+            GameOptions.Option.VIEW_BOBBING,
+            GameOptions.Option.GUI_SCALE,
+            GameOptions.Option.BRIGHTNESS,
+            GameOptions.Option.SHOW_CLOUDS,
+            GameOptions.Option.PARTICLES,
+            GameOptions.Option.USE_FULLSCREEN,
+            GameOptions.Option.ENABLE_VSYNC,
+            GameOptions.Option.MIPMAP_LEVELS,
+            GameOptions.Option.BLOCK_ALTERNATIVES,
+            GameOptions.Option.USE_VBO,
+            GameOptions.Option.ENTITY_SHADOWS
     };
 
     @Dynamic

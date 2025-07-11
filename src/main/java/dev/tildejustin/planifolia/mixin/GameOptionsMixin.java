@@ -16,12 +16,18 @@ public abstract class GameOptionsMixin {
     public int viewDistance;
 
     @Shadow
+    public int maxFramerate;
+
+    @Shadow
+    public boolean vsync;
+
+    @Shadow
     protected MinecraftClient client;
 
     @Unique
     private Integer maxRd = null;
 
-    @ModifyArg(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOption;method_6658(F)V"))
+    @ModifyArg(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions$Option;setMaxValue(F)V"))
     private float decreaseMaxRd(float f) {
         if (maxRd == null) {
             maxRd = client.is64Bit() && Runtime.getRuntime().maxMemory() >= 1000000000L ? 32 : 16;
@@ -43,11 +49,10 @@ public abstract class GameOptionsMixin {
     }
 
     @Dynamic
-    @WrapOperation(method = "setOptionValueOF(Lnet/minecraft/class_350;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
+    @WrapOperation(method = "setOptionValueOF(Lnet/minecraft/class_347$class_350;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
     private void neverFogOff(GameOptions instance, int value, Operation<Void> operation) {
         operation.call(instance, value == 3 ? 1 : value);
     }
-
 
     /**
      * @author tildejustin
@@ -61,14 +66,15 @@ public abstract class GameOptionsMixin {
     @Dynamic
     @Shadow(remap = false)
     private int ofFogType, ofClouds, ofTrees, ofDroppedItems, ofRain, ofAnimatedWater, ofAnimatedLava, ofMipmapType, ofAutoSaveTicks, ofBetterGrass,
-            ofConnectedTextures, ofVignette, ofAfLevel, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks;
+            ofConnectedTextures, ofVignette, ofAfLevel, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks, ofScreenshotSize;
 
     @Dynamic
     @Shadow(remap = false)
     private boolean ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame, ofAnimatedSmoke, ofCustomGuis,
             ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofRainSplash,
             ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater, ofFireworkParticles, ofProfiler, ofBetterSnow, ofSwampColors,
-            ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes, ofLazyChunkLoading, ofDynamicFov, ofFastMath, ofRandomMobs, ofNaturalTextures;
+            ofAlternateBlocks, ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes, ofLazyChunkLoading, ofDynamicFov, ofFastMath,
+            ofNaturalTextures, ofCustomEntityModels, ofShowGlErrors;
 
     @Dynamic
     @Shadow(remap = false)
@@ -81,6 +87,10 @@ public abstract class GameOptionsMixin {
     @Dynamic
     @Inject(method = "loadOfOptions", at = @At("RETURN"), remap = false)
     private void fixIllegalOptions(CallbackInfo ci) {
+        if (maxFramerate == 0) {
+            this.vsync = true;
+            this.maxFramerate = 120;
+        }
         this.viewDistance = MathHelper.clamp(this.viewDistance, 2, maxRd);
         this.ofFogType = MathHelper.clamp(this.ofFogType, 1, 2);
         this.ofFogStart = 0.75f;
@@ -111,7 +121,7 @@ public abstract class GameOptionsMixin {
         this.ofRainSplash = true;
         this.ofLagometer = false;
         this.ofShowFps = false;
-        this.ofAutoSaveTicks = 900; // doesn't do anything
+        this.ofAutoSaveTicks = 900; // overrode changed logic b/c I don't trust it one bit
         this.ofBetterGrass = 3;
         this.ofConnectedTextures = 3;
         this.ofWeather = true;
@@ -128,7 +138,6 @@ public abstract class GameOptionsMixin {
         this.ofProfiler = false;
         this.ofBetterSnow = false;
         this.ofSwampColors = true;
-        this.ofRandomMobs = false;
         this.ofSmoothBiomes = true;
         this.ofCustomFonts = false;
         this.ofCustomColors = false;
@@ -137,10 +146,14 @@ public abstract class GameOptionsMixin {
         this.ofNaturalTextures = false;
         this.ofLazyChunkLoading = false;
         this.ofDynamicFov = false;
+        this.ofAlternateBlocks = false;
         this.ofDynamicLights = 3;
+        this.ofScreenshotSize = 1;
+        this.ofCustomEntityModels = false;
         this.ofCustomGuis = false;
+        this.ofShowGlErrors = false;
         this.ofFullscreenMode = "Default";
         this.ofFastMath = false;
-        this.ofTranslucentBlocks = 0; // different from 1.7.10
+        this.ofTranslucentBlocks = 0; // does nothing in 1.8.9
     }
 }
