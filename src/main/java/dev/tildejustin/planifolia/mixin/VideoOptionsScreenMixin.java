@@ -10,7 +10,8 @@ import java.util.List;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class VideoOptionsScreenMixin extends Screen {
-    @SuppressWarnings({"MissingUnique", "unused"})
+    @Shadow
+    @SuppressWarnings("unused")
     private static final GameOption[] field_1298 = new GameOption[]{
             GameOption.GRAPHICS,
             GameOption.RENDER_DISTANCE,
