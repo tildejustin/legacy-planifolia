@@ -12,6 +12,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
+    @Dynamic
+    @Shadow(remap = false)
+    // breaks if abstract
+    private void updateWaterOpacity() {
+    }
+
     @Shadow
     public int viewDistance;
 
@@ -74,7 +80,7 @@ public abstract class GameOptionsMixin {
             ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofRainSplash,
             ofLagometer, ofShowFps, ofWeather, ofSky, ofStars, ofSunMoon, ofClearWater, ofFireworkParticles, ofProfiler, ofBetterSnow, ofSwampColors,
             ofAlternateBlocks, ofSmoothBiomes, ofCustomFonts, ofCustomColors, ofCustomSky, ofShowCapes, ofLazyChunkLoading, ofDynamicFov, ofFastMath,
-            ofNaturalTextures, ofCustomEntityModels, ofShowGlErrors;
+            ofNaturalTextures, ofCustomEntityModels, ofShowGlErrors, ofRandomEntities, ofCustomItems, ofEmissiveTextures;
 
     @Dynamic
     @Shadow(remap = false)
@@ -138,15 +144,18 @@ public abstract class GameOptionsMixin {
         this.ofProfiler = false;
         this.ofBetterSnow = false;
         this.ofSwampColors = true;
+        this.ofRandomEntities = false;
         this.ofSmoothBiomes = true;
         this.ofCustomFonts = false;
         this.ofCustomColors = false;
+        this.ofCustomItems = false;
         this.ofCustomSky = false;
         this.ofShowCapes = true;
         this.ofNaturalTextures = false;
+        this.ofEmissiveTextures = false;
         this.ofLazyChunkLoading = false;
-        this.ofDynamicFov = false;
-        this.ofAlternateBlocks = false;
+        this.ofDynamicFov = true;
+        this.ofAlternateBlocks = true; // vanilla non optional past 1.8.9?
         this.ofDynamicLights = 3;
         this.ofScreenshotSize = 1;
         this.ofCustomEntityModels = false;
@@ -155,5 +164,6 @@ public abstract class GameOptionsMixin {
         this.ofFullscreenMode = "Default";
         this.ofFastMath = false;
         this.ofTranslucentBlocks = 0; // does nothing in 1.8.9
+        this.updateWaterOpacity();
     }
 }

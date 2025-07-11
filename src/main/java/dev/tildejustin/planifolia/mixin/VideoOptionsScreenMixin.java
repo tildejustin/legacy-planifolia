@@ -10,9 +10,10 @@ import java.util.List;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class VideoOptionsScreenMixin extends Screen {
-    @Shadow
+    @Dynamic
+    @Shadow(remap = false)
     @SuppressWarnings("unused")
-    private static final GameOptions.Option[] OPTIONS = new GameOptions.Option[]{
+    private static final GameOptions.Option[] videoOptions = new GameOptions.Option[]{
             GameOptions.Option.GRAPHICS,
             GameOptions.Option.RENDER_DISTANCE,
             GameOptions.Option.AMBIENT_OCCLUSION,
@@ -20,13 +21,13 @@ public abstract class VideoOptionsScreenMixin extends Screen {
             GameOptions.Option.ANAGLYPH,
             GameOptions.Option.VIEW_BOBBING,
             GameOptions.Option.GUI_SCALE,
+            GameOptions.Option.ATTACK_INDICATOR,
             GameOptions.Option.BRIGHTNESS,
             GameOptions.Option.SHOW_CLOUDS,
             GameOptions.Option.PARTICLES,
             GameOptions.Option.USE_FULLSCREEN,
             GameOptions.Option.ENABLE_VSYNC,
             GameOptions.Option.MIPMAP_LEVELS,
-            GameOptions.Option.BLOCK_ALTERNATIVES,
             GameOptions.Option.USE_VBO,
             GameOptions.Option.ENTITY_SHADOWS
     };
