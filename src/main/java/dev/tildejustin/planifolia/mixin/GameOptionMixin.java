@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.*;
 @Mixin(GameOption.class)
 public abstract class GameOptionMixin {
     @Dynamic
-    @ModifyConstant(method = "<clinit>", constant = @Constant(floatValue = 5))
+    @ModifyConstant(method = "<clinit>", constant = @Constant(floatValue = 5, ordinal = 0))
     private static float fixFpsStep(float constant) {
         return 10;
     }

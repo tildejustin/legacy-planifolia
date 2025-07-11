@@ -13,12 +13,12 @@ public abstract class GameRendererMixin {
     }
 
     @Dynamic
-    @Redirect(method = "getFov", at = @At(value = "FIELD", target = "LConfig;zoomMode:Z", opcode = Opcodes.PUTSTATIC))
+    @Redirect(method = "getFov", at = @At(value = "FIELD", target = "LConfig;zoomMode:Z", opcode = Opcodes.PUTSTATIC, remap = false))
     private void keepZoomOff(boolean original) {
     }
 
     @Dynamic
-    @Redirect(method = "renderGui", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_524;showLagometer(JJ)V"))
+    @Redirect(method = "renderGui", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_524;showLagometer(JJ)V", remap = false))
     private void disableLagMeter(GameRenderer instance, long a, long b) {
     }
 }

@@ -1,38 +1,41 @@
 package dev.tildejustin.planifolia.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.option.*;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.*;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameOptions.class)
 public abstract class GameOptionsMixin {
     @Shadow
     public int viewDistance;
 
+    @Unique
+    private final Integer maxRd = 16;
+
+
     @ModifyArg(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOption;method_6658(F)V"))
     private float decreaseMaxRd(float f) {
-        return 16;
+        return maxRd;
     }
 
     @Dynamic
-    @Redirect(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lorg/apache/commons/lang3/ArrayUtils;add([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;"))
+    @Redirect(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lorg/apache/commons/lang3/ArrayUtils;add([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;", remap = false))
     private Object[] removeZoomHotkey(Object[] original, Object zoomKey) {
         return original;
     }
 
-    @Inject(method = "getStringOption", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resource/language/I18n;translate(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;", ordinal = 1), cancellable = true)
-    @SuppressWarnings({"UnresolvedLocalCapture"})
-    private void fixChunkText(GameOption option, CallbackInfoReturnable<String> cir, @Local(ordinal = 0) String name, @Local int chunks) {
-        cir.setReturnValue(name + chunks + " chunks");
+    @ModifyReturnValue(method = "getStringOption", at = @At(value = "RETURN", ordinal = 0), remap = false)
+    private String fixChunkText(String original) {
+        return original.substring(0, original.lastIndexOf(" ")) + " chunks";
     }
 
     @Dynamic
-    @WrapOperation(method = "setOption(Lnet/minecraft/client/option/GameOption;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD))
+    @WrapOperation(method = "setOption(Lnet/minecraft/client/option/GameOption;I)V", at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofFogType:I", opcode = Opcodes.PUTFIELD, remap = false))
     private void neverFogOff(GameOptions instance, int value, Operation<Void> operation) {
         operation.call(instance, value == 3 ? 1 : value);
     }
@@ -58,9 +61,9 @@ public abstract class GameOptionsMixin {
     private String ofFullscreenMode;
 
     @Dynamic
-    @Inject(method = "loadOfOptions", at = @At("RETURN"))
+    @Inject(method = "loadOfOptions", at = @At("RETURN"), remap = false)
     private void fixIllegalOptions(CallbackInfo ci) {
-        this.viewDistance = MathHelper.clamp(this.viewDistance, 2, 16);
+        this.viewDistance = MathHelper.clamp(this.viewDistance, 2, maxRd);
         this.ofFogType = MathHelper.clamp(this.ofFogType, 1, 2);
         this.ofFogStart = 0.75f;
         this.ofMipmapType = 0;

@@ -31,7 +31,7 @@ public abstract class VideoOptionsScreenMixin extends Screen {
 
     @Dynamic
     @WrapWithCondition(
-            method = "init", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
+            method = "init", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", remap = false),
             slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=of.options.quality"), to = @At(value = "CONSTANT", args = "stringValue=gui.done"))
     )
     private boolean stopOptiFineButtons(List<?> instance, Object e) {
