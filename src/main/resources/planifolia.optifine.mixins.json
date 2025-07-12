@@ -9,7 +9,8 @@
     "GameOptionsMixin",
     "GameRendererMixin",
     "GuiPerformanceSettingsOFMixin",
-    "VideoOptionsScreenMixin"
+    "VideoOptionsScreenMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
