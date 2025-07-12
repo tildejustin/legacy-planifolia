@@ -9,6 +9,9 @@ import net.minecraft.client.util.Window;
 import net.minecraft.util.MetricsData;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
+
+import java.util.List;
 
 @Mixin(DebugHud.class)
 public abstract class DebugHudMixin extends DrawableHelper {
@@ -22,6 +25,28 @@ public abstract class DebugHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private TextRenderer renderer;
+
+    @Dynamic
+    @Redirect(method = "getLeftText", at = @At(value = "INVOKE", target = "Ljava/lang/StringBuffer;append(Ljava/lang/String;)Ljava/lang/StringBuffer;", remap = false))
+    private StringBuffer removeOptiFineText(StringBuffer instance, String str) {
+        return instance;
+    }
+
+    @Redirect(method = "getLeftText", at = @At(value = "INVOKE", target = "Ljava/lang/StringBuilder;toString()Ljava/lang/String;", ordinal = 1, remap = false))
+    private String removeAnimationsCount(StringBuilder instance) {
+        return "";
+    }
+
+    @Dynamic
+    @Redirect(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;set(ILjava/lang/Object;)Ljava/lang/Object;", remap = false))
+    private Object stopListModification(List<?> instance, int idx, Object object) {
+        return null;
+    }
+
+    @Dynamic
+    @Redirect(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", remap = false))
+    private void stopListAddition(List<?> instance, int idx, Object object) {
+    }
 
     /**
      * @author tildejustin
