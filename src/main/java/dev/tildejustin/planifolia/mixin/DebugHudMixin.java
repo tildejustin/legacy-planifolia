@@ -1,5 +1,6 @@
 package dev.tildejustin.planifolia.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -9,6 +10,9 @@ import net.minecraft.client.util.Window;
 import net.minecraft.util.MetricsData;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.injection.*;
+
+import java.util.List;
 
 @Mixin(DebugHud.class)
 public abstract class DebugHudMixin extends DrawableHelper {
@@ -22,6 +26,43 @@ public abstract class DebugHudMixin extends DrawableHelper {
     @Shadow
     @Final
     private TextRenderer renderer;
+
+    @Dynamic
+    @Redirect(method = "getLeftText", at = @At(value = "INVOKE", target = "Ljava/lang/StringBuffer;append(Ljava/lang/String;)Ljava/lang/StringBuffer;", remap = false))
+    private StringBuffer removeOptiFineText(StringBuffer instance, String str) {
+        return instance;
+    }
+
+    @Redirect(method = "getLeftText", at = @At(value = "INVOKE", target = "Ljava/lang/StringBuilder;toString()Ljava/lang/String;", ordinal = 1, remap = false))
+    private String removeAnimationsCount(StringBuilder instance) {
+        return "";
+    }
+
+    // // can't do multiple ats with a redirect
+    // @Dynamic
+    // @WrapOperation(
+    //         method = "getRightText",
+    //         at = {
+    //                 @At(value = "INVOKE", target = "Lnet/optifine/util/NativeMemory;getBufferAllocated()J", remap = false),
+    //                 @At(value = "INVOKE", target = "Lnet/optifine/util/NativeMemory;getBufferMaximum()J", remap = false),
+    //                 @At(value = "INVOKE", target = "Lnet/optifine/util/MemoryMonitor;getAllocationRateMb()J", remap = false)
+    //         },
+    //         require = 3
+    // )
+    // private long avoidMemoryCalls(Operation<Long> operation) {
+    //     return 0;
+    // }
+
+    @Dynamic
+    @Redirect(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;set(ILjava/lang/Object;)Ljava/lang/Object;", remap = false))
+    private Object stopListModification(List<?> instance, int idx, Object object) {
+        return null;
+    }
+
+    @Dynamic
+    @Redirect(method = "getRightText", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", remap = false))
+    private void stopListAddition(List<?> instance, int idx, Object object) {
+    }
 
     /**
      * @author tildejustin

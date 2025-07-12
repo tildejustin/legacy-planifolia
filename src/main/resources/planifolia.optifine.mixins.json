@@ -12,7 +12,8 @@
     "GuiPerformanceSettingsOFMixin",
     "IntegratedServerMixin",
     "KeyUtilsMixin",
-    "VideoOptionsScreenMixin"
+    "VideoOptionsScreenMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
