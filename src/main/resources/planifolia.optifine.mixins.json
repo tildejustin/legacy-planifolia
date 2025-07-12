@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "ConfigMixin",
+    "DebugHudMixin",
     "GameOptionAccessor",
     "GameOptions$OptionMixin",
     "GameOptionsMixin",
