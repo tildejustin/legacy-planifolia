@@ -15,7 +15,8 @@ public abstract class GameRendererMixin {
     @Dynamic
     @ModifyExpressionValue(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/KeyBinding;getCode()I", ordinal = 0))
     private int keepZoomOff(int original) {
-        return 0;
+        // this is opposite what the decomp would have you believe would work, but it does and 0 doesn't
+        return -1;
     }
 
     @Dynamic
