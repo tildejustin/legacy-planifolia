@@ -2,7 +2,7 @@ package dev.tildejustin.planifolia.mixin;
 
 import com.llamalad7.mixinextras.injector.*;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
-import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.*;
 import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
@@ -39,6 +39,16 @@ public abstract class GameOptionsMixin {
     @Redirect(method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V", at = @At(value = "INVOKE", target = "Lorg/apache/commons/lang3/ArrayUtils;add([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;", remap = false))
     private Object[] removeZoomHotkey(Object[] original, Object zoomKey) {
         return original;
+    }
+
+    @Dynamic
+    @WrapOperation(
+            method = "<init>(Lnet/minecraft/client/MinecraftClient;Ljava/io/File;)V",
+            at = @At(value = "NEW", target = "(Ljava/lang/String;ILjava/lang/String;)Lnet/minecraft/client/option/KeyBinding;", ordinal = 0),
+            slice = @Slice(from = @At(value = "CONSTANT", args = "stringValue=optionsof.txt"))
+    )
+    private KeyBinding doNotCreateZoomHotkey(String s, int i, String t, Operation<KeyBinding> operation) {
+        return null;
     }
 
     @ModifyReturnValue(method = "getStringOption", at = @At(value = "RETURN", ordinal = 0), remap = false)
