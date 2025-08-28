@@ -13,7 +13,7 @@ public abstract class GameRendererMixin {
     private float viewDistance;
 
     @Unique
-    private static final Object object = new Object();
+    private static final Screen screen = new Screen();
 
     @ModifyArg(method = "renderFog", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/GL11;glFogf(IF)V", ordinal = 1), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;isFogThick(II)Z")))
     private float fixNetherFog(float original) {
@@ -21,10 +21,9 @@ public abstract class GameRendererMixin {
     }
 
     @Dynamic
-    @Coerce
     @ModifyExpressionValue(method = "getFov", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/client/gui/screen/Screen;", ordinal = 0))
-    private Object keepZoomOff(Screen original) {
-        return object;
+    private Screen keepZoomOff(Screen original) {
+        return screen;
     }
 
     @Dynamic
