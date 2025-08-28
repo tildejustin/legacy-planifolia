@@ -81,6 +81,32 @@ public abstract class GameOptionsMixin {
     }
 
     @Dynamic
+    @ModifyConstant(method = "setOptionValueOF(Lnet/minecraft/class_347$class_350;I)V", constant = @Constant(intValue = 5), remap = false)
+    private int increaseChunkUpdatesLimit(int original) {
+        return 25;
+    }
+
+    @Dynamic
+    @ModifyConstant(method = "loadOfOptions", constant = @Constant(intValue = 5), remap = false)
+    private int increaseChunkUpdatesLoadLimit(int original) {
+        return Integer.MAX_VALUE;
+    }
+
+    @Dynamic
+    @Shadow(remap = false)
+    private int ofChunkUpdates;
+
+    @Dynamic
+    @Redirect(
+            method = "setOptionValueOF(Lnet/minecraft/class_347$class_350;I)V",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofChunkUpdates:I", ordinal = 0, opcode = Opcodes.PUTFIELD),
+            remap = false
+    )
+    private void increaseScale(GameOptions options, int original) {
+        this.ofChunkUpdates += this.ofChunkUpdates >= 5 ? 5 : 1;
+    }
+
+    @Dynamic
     @Shadow(remap = false)
     private int ofFogType, ofClouds, ofTrees, ofDroppedItems, ofRain, ofAnimatedWater, ofAnimatedLava, ofMipmapType, ofAutoSaveTicks, ofBetterGrass,
             ofConnectedTextures, ofVignette, ofAfLevel, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks, ofScreenshotSize;
