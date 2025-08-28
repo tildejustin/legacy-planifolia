@@ -79,6 +79,33 @@ public abstract class GameOptionsMixin {
             ofAutoSaveTicks, ofBetterGrass, ofConnectedTextures, ofVignette, ofChunkLoading, ofTime, ofAaLevel, ofDynamicLights, ofTranslucentBlocks;
 
     @Dynamic
+    @ModifyConstant(method = "setOption(Lnet/minecraft/client/option/GameOption;I)V", constant = @Constant(intValue = 5), remap = false)
+    private int increaseChunkUpdatesLimit(int original) {
+        return 25;
+    }
+
+    @Dynamic
+    @ModifyConstant(method = "loadOfOptions", constant = @Constant(intValue = 5), remap = false)
+    private int increaseChunkUpdatesLoadLimit(int original) {
+        return Integer.MAX_VALUE;
+    }
+
+    @Dynamic
+    @Shadow(remap = false)
+    private int ofChunkUpdates;
+
+
+    @Dynamic
+    @Redirect(
+            method = "setOption(Lnet/minecraft/client/option/GameOption;I)V",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/class_347;ofChunkUpdates:I", ordinal = 0, opcode = Opcodes.PUTFIELD),
+            remap = false
+    )
+    private void increaseScale(GameOptions options, int original) {
+        this.ofChunkUpdates += this.ofChunkUpdates >= 5 ? 5 : 1;
+    }
+
+    @Dynamic
     @Shadow(remap = false)
     private boolean ofLoadFar, ofSmoothWorld, ofAnimatedFire, ofAnimatedPortal, ofAnimatedRedstone, ofAnimatedExplosion, ofAnimatedFlame, ofAnimatedSmoke,
             ofVoidParticles, ofWaterParticles, ofPortalParticles, ofPotionParticles, ofDrippingWaterLava, ofAnimatedTerrain, ofAnimatedTextures, ofAnimatedItems,
