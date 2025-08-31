@@ -1,5 +1,6 @@
 package dev.tildejustin.planifolia.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.Window;
@@ -15,6 +16,12 @@ public abstract class GameRendererMixin {
     @ModifyArg(method = "renderFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;fogEnd(F)V"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;isFogThick(II)Z")))
     private float fixNetherFog(float original) {
         return Math.min(original, 192.0F) * 0.5F;
+    }
+
+    @Dynamic
+    @ModifyExpressionValue(method = "getFov", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;isPressed(Lnet/minecraft/client/option/KeyBinding;)Z"))
+    private boolean keepZoomOff(boolean original) {
+        return false;
     }
 
     @Dynamic
