@@ -1,6 +1,8 @@
 package dev.tildejustin.planifolia.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.math.MathHelper;
@@ -11,6 +13,9 @@ import org.spongepowered.asm.mixin.injection.*;
 public abstract class GameRendererMixin {
     @Shadow
     private float viewDistance;
+
+    @Shadow
+    private MinecraftClient client;
 
     @ModifyArg(method = "renderFog", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;fogEnd(F)V"), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;isFogThick(II)Z")))
     private float fixNetherFog(float original) {
@@ -23,8 +28,20 @@ public abstract class GameRendererMixin {
     }
 
     @Dynamic
-    @WrapOperation(method = "setupCamera", at = {@At(value = "INVOKE", target = "LConfig;isFogFancy()Z"), @At(value = "INVOKE", target = "LConfig;isFogFast()Z")})
+    @WrapOperation(method = "setupCamera", at = {@At(value = "INVOKE", target = "LConfig;isFogFancy()Z", ordinal = 0), @At(value = "INVOKE", target = "LConfig;isFogFast()Z", ordinal = 0)})
     private boolean noFogCulling(Operation<Boolean> operation) {
+        return false;
+    }
+
+    @Dynamic
+    @ModifyExpressionValue(method = "renderWorld(IFJ)V", at = @At(value = "INVOKE", target = "LConfig;isSkyEnabled()Z"))
+    private boolean correctlyStopSkyRendering(boolean original) {
+        return this.client.options.viewDistance >= 4;
+    }
+
+    @Dynamic
+    @ModifyExpressionValue(method = "renderWorld(IFJ)V", at = {@At(value = "INVOKE", target = "LConfig;isSunMoonEnabled()Z"), @At(value = "INVOKE", target = "LConfig;isStarsEnabled()Z")})
+    private boolean fixSkyIfBranch(boolean original) {
         return false;
     }
 
